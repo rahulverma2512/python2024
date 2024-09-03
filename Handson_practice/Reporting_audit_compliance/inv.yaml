@@ -1,0 +1,18 @@
+- 'device_type': cisco_ios
+  'host': 192.168.10.147
+  'hostname': sw1
+  username: user_switch1
+  password: pass_switch1
+  secret: enable_switch1
+- 'device_type': cisco_ios
+  'host': 192.168.10.148
+  'hostname': sw2
+  username: user_switch2
+  password: pass_switch2
+  secret: enable_switch2
+# - 'device_type': cisco_ios
+#   'host': 192.168.10.149
+#   'hostname': sw3
+#   username: user_switch3
+#   password: pass_switch3
+#   secret: enable_switch3
