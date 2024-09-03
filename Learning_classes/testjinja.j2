@@ -1,0 +1,17 @@
+{# vlan {{ conf_vlan["vlans"][0] }}
+vlan {{ conf_vlan["vlans"][1] }}
+vlan {{ conf_vlan["vlans"][2] }} #}
+
+vlan {{ conf_vlan["vlan_data"][0]["vlan_id"] }}
+ name {{ conf_vlan["vlan_data"][0]["vlan_name"]}}
+vlan {{ conf_vlan["vlan_data"][1]["vlan_id"] }}
+ name {{ conf_vlan["vlan_data"][1]["vlan_name"]}}
+vlan {{ conf_vlan["vlan_data"][2]["vlan_id"] }}
+ name {{ conf_vlan["vlan_data"][2]["vlan_name"]}}
+ 
+{# 
+{% for vlan in conf_vlan["vlan_data"] -%}
+ vlan {{ vlan["vlan_id"] }}
+  name {{ vlan["vlan_name"] }}
+  !
+{% endfor %}#}

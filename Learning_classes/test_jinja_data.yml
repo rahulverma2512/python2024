@@ -1,0 +1,19 @@
+# vlans:
+#         - 10
+#         - 20
+#         - 30
+
+vlan_data:
+  - vlan_id: 10    # VLAN ID for the market
+    vlan_name: market
+  - vlan_id: 20    # VLAN ID for sales
+    vlan_name: sales
+  - vlan_id: 30    # VLAN ID for fin
+    vlan_name: fin
+
+# - vlan_id: 10    
+#   vlan_name: market
+# - vlan_id: 20   
+#   vlan_name: sales
+# - vlan_id: 30   
+#   vlan_name: fin
