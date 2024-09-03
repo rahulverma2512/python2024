@@ -90,7 +90,7 @@ def service_now_workflow(yaml_file="inv.yaml", env_file="env_vars.env", commands
                             # Combine outputs into work notes
                             work_note = (
                                 f"Output of 'show interfaces {interface}':\n{show_interface_output}\n"
-                                # f"Output of 'show logging | i {interface}':\n{show_logg_output}\n"
+                                f"Output of 'show logging | i {interface}':\n{show_logg_output}\n"
                                 f"Output of 'show clock':\n{show_clock_output}\n"
                             )
                             update_servicenow_incident(sys_id,incidents,work_note)  
@@ -123,10 +123,9 @@ def service_now_workflow(yaml_file="inv.yaml", env_file="env_vars.env", commands
                                 f"Output of 'show clock':\n{show_clock_output}\n"
                             )
                         update_servicenow_incident(sys_id,incidents,work_note)
-                        print(f"Issue has been fixed Incident: {incidents} will be resolved")
                         interface = "Ethernet0/1"
                         caller = "Rahul Verma"
-                        resolve_servicenow_incident(sys_id, caller,interface)
+                        resolve_servicenow_incident(sys_id,incidents, caller,interface)
 
             # Disconnect from the device
             net_connect.disconnect()

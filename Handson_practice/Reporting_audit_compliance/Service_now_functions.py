@@ -151,6 +151,54 @@ def check_existing_incident(interface, hostname):
         print(f"An error occurred while checking existing incidents for {hostname} - Interface {interface}: {str(e)}")
         return []
 
+def servicenow_inc_creation(interface, hostname):
+    """
+    This function creates a ServiceNow incident for a specified interface and hostname.
+
+    Args:
+        interface (str): The name of the interface.
+        hostname (str): The hostname of the device.
+
+    Returns:
+        None
+    """
+    # Load environment variables for ServiceNow
+    servicenow_instance = os.getenv('SERVICENOW_INSTANCE')
+    servicenow_user = os.getenv('SERVICENOW_USER')
+    servicenow_password = os.getenv('SERVICENOW_PASSWORD')
+
+    # ServiceNow API URL for creating incidents
+    url = f"https://{servicenow_instance}.service-now.com/api/now/table/incident"
+
+    # Data to be sent to ServiceNow API
+    data = {
+        "short_description": f"Interface {interface} is down on {hostname}",
+        "description": f"The interface {interface} on device {hostname} is currently down. Please investigate.",
+        "caller" : "Rahul Verma",
+        "category": "Network",
+        "subcategory": "IP Address",
+        "Configuration item" : f"{hostname}",
+        "priority": "3"
+    }
+
+    # Headers for the API request
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+
+    # Send a POST request to ServiceNow API to create an incident
+    response = requests.post(url, auth=(servicenow_user, servicenow_password), headers=headers, json=data)
+
+    if response.status_code == 201:
+        incident_details = response.json().get('result', {})
+        sys_id = incident_details.get('sys_id')
+        incident_number = incident_details.get('number')
+        print(f"Incident created successfully. Sys_id: {sys_id}, Incident Number: {incident_number}")
+        return sys_id
+    else:
+        print(f"Failed to create incident. Status Code: {response.status_code}, Response: {response.text}")
+        return None
 
 
 
@@ -184,69 +232,21 @@ def update_servicenow_incident(sys_id, incident_number, work_note):
         # Update the incident with the work note
         response = requests.patch(url, auth=(servicenow_user, servicenow_password), headers=headers, json=update_data)
         if response.status_code == 200:
-            print(f"Incident: {incident_number[0]['number']}  updated successfully.")
+            incident_details = response.json().get('result', {})
+            sys_id = incident_details.get('sys_id')
+            incident_number = incident_details.get('number')
+            print(f"Incident with incident: {incident_number} updated successfully.")
         else:
             print(f"Failed to update incident: {incident_number} with sys_id: {sys_id}. Status Code: {response.status_code}, Response: {response.text}")
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while updating incident: {incident_number} with sys_id: {sys_id}: {str(e)}")
 
 
-
-def servicenow_inc_creation(interface, hostname):
-    """
-    This function creates a ServiceNow incident for a specified interface and hostname.
-
-    Args:
-        interface (str): The name of the interface.
-        hostname (str): The hostname of the device.
-
-    Returns:
-        None
-    """
-    # Load environment variables for ServiceNow
-    servicenow_instance = os.getenv('SERVICENOW_INSTANCE')
-    servicenow_user = os.getenv('SERVICENOW_USER')
-    servicenow_password = os.getenv('SERVICENOW_PASSWORD')
-
-    # ServiceNow API URL for creating incidents
-    url = f"https://{servicenow_instance}.service-now.com/api/now/table/incident"
-
-    # Data to be sent to ServiceNow API
-    data = {
-        "short_description": f"Interface {interface} is down on {hostname}",
-        "description": f"The interface {interface} on device {hostname} is currently down. Please investigate.",
-        "caller" : "Rahul Verma",
-        "category": "Network",
-        "subcategory": "IP Address",
-        "Configuration item" : {hostname},
-        "priority": "3"
-    }
-
-    # Headers for the API request
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-
-    # Send a POST request to ServiceNow API to create an incident
-    response = requests.post(url, auth=(servicenow_user, servicenow_password), headers=headers, json=data)
-
-    if response.status_code == 201:
-        incident_details = response.json().get('result', {})
-        sys_id = incident_details.get('sys_id')
-        incident_number = incident_details.get('number')
-        print(f"Incident created successfully. Sys_id: {sys_id}, Incident Number: {incident_number}")
-        return sys_id
-    else:
-        print(f"Failed to create incident. Status Code: {response.status_code}, Response: {response.text}")
-        return None
-
-
 import os
 import requests
 import json
 
-def resolve_servicenow_incident(sys_id, caller,interface):
+def resolve_servicenow_incident(sys_id,incident_number, caller,interface):
     """
     Function to resolve a specific ServiceNow incident with the given information.
 
@@ -282,6 +282,10 @@ def resolve_servicenow_incident(sys_id, caller,interface):
         # Send the PATCH request to update the incident
         response = requests.patch(url, auth=(servicenow_user, servicenow_password), headers=headers, json=update_data)
         if response.status_code == 200:
+            incident_details = response.json().get('result', {})
+            sys_id = incident_details.get('sys_id')
+            incident_number = incident_details.get('number')
+            print(f"Issue has been fixed Incident: {incident_number} will be resolved now")
             print(f"Incident with incident: {incident_number} resolved successfully.")
         else:
             print(f"Failed to resolve incident with sys_id {sys_id}. Status Code: {response.status_code}, Response: {response.text}")
