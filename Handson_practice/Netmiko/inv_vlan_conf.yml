@@ -1,0 +1,6 @@
+- 'device_type': cisco_ios
+  'host': 192.168.10.147
+  'hostname': sw1
+- 'device_type': cisco_ios
+  'host': 192.168.10.148
+  'hostname': sw2
